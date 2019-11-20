@@ -1,0 +1,73 @@
+import pygame
+import random
+
+timer = pygame.time.Clock()
+
+BACKGROUND = (73,184,212)
+RED = (240,240,240)
+BLUE = (99,106,196) 
+pygame.init()
+HEIGHT =400
+WIDTH=400
+
+ekran = pygame.display.set_mode((WIDTH,HEIGHT))
+
+z = pygame.font.get_fonts()
+
+font = pygame.font.SysFont("bitstreamverasansmono",128)
+
+fontSize = 48
+fontChange = 1
+rotate = 0
+
+def snowFlurry(flakesNumber):
+  snowFlakes = []
+  for a in range(0,flakesNumber):
+    flakeX = random.randint(0,WIDTH)
+    flakeY = random.randint(0,HEIGHT)
+    flakeV = random.randint(3,7)
+    flakeSize = random.choice([37,42,47,53])
+    flakeRotate = random.randint(0,90)
+    flakeChange = random.choice([-1,1])
+    snowFlakes += [[flakeX,flakeY,flakeV,flakeSize,flakeRotate,flakeChange]]
+  return snowFlakes
+  
+def drawSnowflakes(snowFlakes):
+  snowFlakes2 =[]
+  for flakeX,flakeY,flakeV,flakeSize,flakeRotate,flakeChange in snowFlakes:
+    font = pygame.font.SysFont("bitstreamverasansmono",flakeSize)
+    flake = font.render('*', True,RED)
+    flake = pygame.transform.rotate(flake, flakeRotate)
+    flake_prost = flake.get_rect()
+    ekran.blit(flake,(flakeX,flakeY))
+    if flakeSize <36 or flakeSize >54:
+      flakeChange = - flakeChange
+    flakeSize += flakeChange
+    flakeY +=flakeV
+    flakeRotate +=2
+    if flakeY >WIDTH:
+      flakeY = -50
+    snowFlakes2 += [[flakeX,flakeY,flakeV,flakeSize,flakeRotate,flakeChange]]
+    
+  snowFlakes = snowFlakes2 
+  return snowFlakes
+
+snowFlakes = snowFlurry(100)    
+
+while True:
+  ekran.fill(BACKGROUND)  
+  snowFlakes = drawSnowflakes(snowFlakes)
+  font = pygame.font.SysFont("bitstreamverasansmono",48)
+  varcaus = font.render('MERRY X-MAS', True,BLUE)
+  varcaus_prost = varcaus.get_rect()
+  ekran.blit(varcaus,(WIDTH/2 - varcaus_prost.centerx,HEIGHT/2 - varcaus_prost.centery))
+  
+  for event in pygame.event.get() : 
+    if event.type == pygame.QUIT : 
+      pygame.quit() 
+      
+  pygame.display.update() 
+  
+  timer.tick(60)
+
+pygame.quit()
